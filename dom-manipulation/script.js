@@ -163,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Merge server quotes with local quotes
       await resolveConflicts(serverQuotes);
+      alert("Quotes synced with server!")
       showNotification("Sync completed successfully", "success");
 
       // Save updated quotes to local storage
