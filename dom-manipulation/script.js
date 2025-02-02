@@ -72,5 +72,60 @@ document.addEventListener("DOMContentLoaded", () => {
     // Display a random quote on page load
     showRandomQuote();
 });
+// Initialize quotes array from Local Storage, if any
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+// Function to save quotes to Local Storage
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Function to add a new quote
+function addQuote(newQuote) {
+  quotes.push(newQuote);
+  saveQuotes(); // Save quotes to local storage
+  displayQuotes();
+}
+
+// Function to display quotes (UI)
+function displayQuotes() {
+  const quoteList = document.getElementById('quoteList');
+  quoteList.innerHTML = '';
+  quotes.forEach((quote) => {
+    const li = document.createElement('li');
+    li.textContent = quote;
+    quoteList.appendChild(li);
+  });
+}
+
+// Load quotes when the page initializes
+document.addEventListener('DOMContentLoaded', displayQuotes);
+// Function to export quotes to a JSON file
+function exportToJson() {
+    const jsonContent = JSON.stringify(quotes, null, 2); // Pretty print JSON
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'quotes.json'; // Default filename
+    a.click(); // Trigger the download
+    URL.revokeObjectURL(url); // Clean up the URL
+  }
+  
+  // Example: Add a button for export
+  const exportButton = document.getElementById('exportButton');
+  exportButton.addEventListener('click', exportToJson);
+  function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      const importedQuotes = JSON.parse(event.target.result);
+      quotes.push(...importedQuotes);
+      saveQuotes();
+      alert('Quotes imported successfully!');
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+  
 
   
