@@ -135,14 +135,14 @@ function exportToJson() {
   ];
 
   function populateCategories() {
-    const categorySelect = document.getElementById('categorySelect');
+    const categoryFilter = document.getElementById('categorySelect');
     const categories = [...new Set(quotes.map(quote => quote.category))];
-    categorySelect.innerHTML = '<option value="">All Categories</option>';
+    categoryFilter.innerHTML = '<option value="">All Categories</option>';
     categories.forEach(category => {
       const option = document.createElement('option');
       option.value = category;
       option.textContent = category;
-      categorySelect.appendChild(option);
+      categoryFilter.appendChild(option);
     });
   }
 
