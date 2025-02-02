@@ -195,4 +195,98 @@ function exportToJson() {
     loadSelectedCategory();
   });
 
+  // Sample quotes with categories
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [
+    { text: "Believe in yourself", category: "Motivational" },
+    { text: "Never give up", category: "Motivational" },
+    { text: "The only limit is your mind", category: "Inspirational" },
+    { text: "Stay focused", category: "Productivity" }
+  ];
   
+  // URL of the mock API (simulating server interaction)
+  const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Using JSONPlaceholder for simulation
+  
+  // Fetch quotes from the simulated server
+  async function fetchQuotesFromServer() {
+    try {
+      const response = await fetch(serverUrl);
+      const serverQuotes = await response.json();
+      
+      // For simplicity, we're assuming the server returns quotes in a specific structure
+      const formattedQuotes = serverQuotes.map(quote => ({
+        text: quote.title,  // Mock data has a title field instead of 'text'
+        category: 'General'  // For simplicity, assign a default category
+      }));
+      
+      return formattedQuotes;
+    } catch (error) {
+      console.error("Error fetching quotes from server:", error);
+      return [];  // Return an empty array in case of an error
+    }
+  }
+  / Sync local quotes with the server quotes
+async function syncData() {
+  const serverQuotes = await fetchQuotesFromServer();
+
+  // Simple conflict resolution: server data takes precedence
+  if (serverQuotes.length > 0) {
+    resolveConflicts(serverQuotes);
+  }
+}
+
+// Function to resolve conflicts between local and server data
+function resolveConflicts(serverQuotes) {
+  // Assuming the local data is more up-to-date if quotes already exist
+  // Merge server data, with priority to server updates
+  serverQuotes.forEach((serverQuote, index) => {
+    const localQuoteIndex = quotes.findIndex(localQuote => localQuote.text === serverQuote.text);
+    
+    // If a conflict exists (same text but different categories), resolve it
+    if (localQuoteIndex === -1) {
+      quotes.push(serverQuote);  // If no conflict, add the server quote to local data
+    } else {
+      // Conflict: Overwrite local data with server data
+      quotes[localQuoteIndex] = serverQuote;
+    }
+  });
+
+  // Save the resolved quotes to local storage
+  saveQuotesToLocalStorage();
+  displayQuotes(quotes);  // Update the displayed quotes
+  notifyUser("Data synchronized with the server and conflicts resolved.");
+}
+
+// Function to display quotes in the UI
+function displayQuotes(filteredQuotes) {
+  const quoteList = document.getElementById('quoteList');
+  quoteList.innerHTML = '';  // Clear previous list
+
+  filteredQuotes.forEach(quote => {
+    const li = document.createElement('li');
+    li.textContent = `${quote.text} (${quote.category})`;
+    quoteList.appendChild(li);
+  });
+}
+
+// Save quotes to local storage
+function saveQuotesToLocalStorage() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Function to notify users when conflicts are resolved or data is updated
+function notifyUser(message) {
+  const notificationArea = document.getElementById('notificationArea');
+  notificationArea.innerHTML = message;
+  setTimeout(() => {
+    notificationArea.innerHTML = '';  // Clear the notification after 5 seconds
+  }, 5000);
+}
+
+// Periodically sync data every 10 seconds (simulating background sync)
+setInterval(syncData, 10000);  // Sync every 10 seconds
+
+// Initialize the page when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  displayQuotes(quotes);
+  syncData();  // Initial sync when the page is loaded
+});
