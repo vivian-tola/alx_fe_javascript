@@ -126,6 +126,73 @@ function exportToJson() {
     };
     fileReader.readAsText(event.target.files[0]);
   }
-  
+   // Sample quotes with categories
+  let quotes = JSON.parse(localStorage.getItem('quotes')) || [
+    { text: "Believe in yourself", category: "Motivational" },
+    { text: "Never give up", category: "Motivational" },
+    { text: "The only limit is your mind", category: "Inspirational" },
+    { text: "Stay focused", category: "Productivity" }
+  ];
+
+  function populateCategories() {
+    const categorySelect = document.getElementById('categorySelect');
+    const categories = [...new Set(quotes.map(quote => quote.category))];
+    categorySelect.innerHTML = '<option value="">All Categories</option>';
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      categorySelect.appendChild(option);
+    });
+  }
+
+  function filterQuotes() {
+    const selectedCategory = document.getElementById('categorySelect').value;
+    const filteredQuotes = selectedCategory
+      ? quotes.filter(quote => quote.category === selectedCategory)
+      : quotes;
+    displayQuotes(filteredQuotes);
+  }
+
+  function displayQuotes(filteredQuotes) {
+    const quoteList = document.getElementById('quoteList');
+    quoteList.innerHTML = '';
+    filteredQuotes.forEach(quote => {
+      const li = document.createElement('li');
+      li.textContent = `${quote.text} (${quote.category})`;
+      quoteList.appendChild(li);
+    });
+  }
+
+  function saveSelectedCategory(category) {
+    localStorage.setItem('selectedCategory', category);
+  }
+
+  function loadSelectedCategory() {
+    const lastCategory = localStorage.getItem('selectedCategory');
+    if (lastCategory) {
+      document.getElementById('categorySelect').value = lastCategory;
+      filterQuotes();
+    }
+  }
+
+  function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+    saveSelectedCategory(document.getElementById('categorySelect').value);
+  }
+
+  function addQuote(newQuote) {
+    quotes.push(newQuote);
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+  }
+
+  document.getElementById('categorySelect').addEventListener('change', filterQuotes);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    populateCategories();
+    loadSelectedCategory();
+  });
 
   
