@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Function to sync with server
-  async function syncWithServer() {
+  async function syncQuotes() {
     showNotification("Syncing with server...", "info");
 
     try {
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
   newQuoteButton.addEventListener("click", showRandomQuote);
   addQuoteButton.addEventListener("click", addQuote);
   if (syncButton) {
-    syncButton.addEventListener("click", syncWithServer);
+    syncButton.addEventListener("click", syncQuotes);
   }
 
   // Initialize
@@ -284,8 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
   showRandomQuote();
 
   // Start periodic sync
-  setInterval(syncWithServer, 30000);
+  setInterval(syncQuotes, 30000);
 
   // Initial sync
-  syncWithServer().catch(console.error);
+  syncQuotes().catch(console.error);
 });
