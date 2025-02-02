@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to add a new quote
     function addQuote() {
+        const quoteInput = document.getElementById("newQuoteText");
+        const categoryInput = document.getElementById("newQuoteCategory");
         const text = newQuoteText.value.trim();
         const category = newQuoteCategory.value.trim();
 
