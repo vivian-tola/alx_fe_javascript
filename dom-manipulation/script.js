@@ -34,19 +34,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to add a new quote
     function createAddQuoteForm() {
-        const quoteInput = document.getElementById("newQuoteText");
-        const categoryInput = document.getElementById("newQuoteCategory");
         const text = newQuoteText.value.trim();
         const category = newQuoteCategory.value.trim();
 
+        
         if (text === "" || category === "") {
             alert("Please enter both a quote and a category.");
             return;
         }
 
-        // Add new quote to the array
         quotes.push({ text, category });
 
+        const quoteContainer = document.createElement("div")
+        const quoteText = document.createElement("p");
+        quoteText.textContent = `"${text}"`;
+
+
+        const categoryText = document.createElement("small");
+        categoryText.className = "quote-category";
+        categoryText.textContent = `- ${category}`;
+        quoteContainer.appendChild(quoteText);
+        quoteContainer.appendChild(categoryText);
+
+        // Add new quote to the array
+  
         // Clear input fields
         newQuoteText.value = "";
         newQuoteCategory.value = "";
